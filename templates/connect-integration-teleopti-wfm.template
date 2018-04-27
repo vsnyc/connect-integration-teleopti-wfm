@@ -1,15 +1,38 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Deploys resources for Amazon Connect to Teleopti WFM integration.",
+  "Metadata" : {
+	  "AWS::CloudFormation::Interface" : {
+		"ParameterGroups" : [ {
+			"Label": {"default" : "Amazon Resources" },
+			"Parameters": [ "BucketName" ] 
+		},
+		{
+			"Label": {"default" : "Teleopti SFTP Credentials" },
+			"Parameters": [ "SFTPHostname","SFTPUserName","SFTPPassword" ] }
+		],
+		"ParameterLabels" : {
+			"BucketName" : { "default": "Please name your new Teleopti Bucket:" },
+			"SFTPUserName": { "default": "Teleopti SFTP User ID:" },
+			"SFTPPassword": { "default": "Teleopti SFTP User Password:" },
+			"SFTPHostname": { "default": "Teleopti SFTP Hostname:" }
+		}
+	  }
+  },
   "Parameters": {
     "BucketName": {
-      "Type": "String",
-      "Description": "The S3 bucket where you will sync to and from SFTP."
+		"Type": "String",
+		"Description": "The S3 bucket where you will sync to and from SFTP."
     },
 	"SFTPUserName": {
+		"AllowedPattern": "^[a-zA-Z0-9_]+$",
+		"ConstraintDescription": " Password must contain only alphanumeric and underscore characters.",
     	"Type": "String",
     	"Description": "The Teleopti provided username for your SFTP account."
     },
     "SFTPPassword": {
+		"AllowedPattern": "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}$",
+		"ConstraintDescription": " Password must be at least 8 characters, and contain uppercase and lowercase letters, and at least one numeric.",
     	"Type": "String",
     	"Description": "The Teleopti provided password for your SFTP account."
     },
@@ -228,7 +251,7 @@
 				}
 			]
 		}
-      },
+		},
       "DependsOn": [
         "BridgeResourcePolicy","S3ToSQSPolicy"
       ]
@@ -273,7 +296,7 @@
 		"State" : "ENABLED",
 		"Targets" : [ {
 			"Arn": { "Fn::GetAtt": [ "BridgeFunction", "Arn" ] },
-			"Id": { "Fn::Join" : ["", ["TeleoptiTranferEvent",{ "Ref": "AWS::StackName" } ]] }
+			"Id": { "Fn::Join" : ["", ["TeleoptiTransferEvent",{ "Ref": "AWS::StackName" } ]] }
 		}]
 	  }
 	},
