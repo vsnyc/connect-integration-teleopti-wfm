@@ -3,16 +3,11 @@
   "Description": "Deploys resources for Amazon Connect to Teleopti WFM integration.",
   "Metadata" : {
 	  "AWS::CloudFormation::Interface" : {
-		"ParameterGroups" : [ {
-			"Label": {"default" : "Amazon Resources" },
-			"Parameters": [ "BucketName" ] 
-		},
-		{
+		"ParameterGroups" : [ 		{
 			"Label": {"default" : "Teleopti SFTP Credentials" },
 			"Parameters": [ "SFTPHostname","SFTPUserName","SFTPPassword" ] }
 		],
 		"ParameterLabels" : {
-			"BucketName" : { "default": "Please name your new Teleopti Bucket:" },
 			"SFTPUserName": { "default": "Teleopti SFTP User ID:" },
 			"SFTPPassword": { "default": "Teleopti SFTP User Password:" },
 			"SFTPHostname": { "default": "Teleopti SFTP Hostname:" }
@@ -20,10 +15,6 @@
 	  }
   },
   "Parameters": {
-    "BucketName": {
-		"Type": "String",
-		"Description": "The S3 bucket where you will sync to and from SFTP."
-    },
 	"SFTPUserName": {
 		"AllowedPattern": "^[a-zA-Z0-9_]+$",
 		"ConstraintDescription": " Password must contain only alphanumeric and underscore characters.",
@@ -62,7 +53,8 @@
 						"Effect": "Allow",
 						"Action": [ "sqs:SendMessage","sqs:ReceiveMessage" ],
 						"Principal": "*",
-						"Condition": {
+						"Resource": "*",
+                        "Condition": {
                             "ArnLike": {
                                 "aws:SourceArn": "arn:aws:s3:::*"
                             }
@@ -121,7 +113,6 @@
 		"Version": "1.0",
 		"Properties": {
 			"ServiceToken": { "Fn::GetAtt" : [ "IntegrationTestFunction", "Arn" ] },
-			"s3Location": { "Ref": "BucketName" },
 			"host": { "Ref": "SFTPHostname" },
 			"port": 22,
 			"password": { "Ref": "SFTPPassword" },
@@ -182,8 +173,8 @@
                     "s3:*"
                   ],
                   "Resource": [
-                    { "Fn::Join":  [ "", [ "arn:aws:s3:::", { "Ref": "BucketName" } ] ] },
-                    { "Fn::Join":  [ "", [ "arn:aws:s3:::", { "Ref": "BucketName" } , "/*" ] ] }
+                    {"Fn::GetAtt" : [ "BridgeBucket", "Arn" ]},
+                    {"Fn::Join": [ "",["arn:aws:s3:::", { "Ref": "BridgeBucket" }, "/*" ] ] }
                   ]
                 }
               ]
@@ -208,7 +199,9 @@
             }
           }
         ]
-      }
+      },
+	  "DependsOn" : [
+		"BridgeBucket", "BridgeQueue" ]
     },
     "BridgeFunction": {
       "Type": "AWS::Lambda::Function",
@@ -221,7 +214,7 @@
         "Description": "Used sync files between S3 and SFTP servers.",
         "Environment": {
         	"Variables" : {
-  				"s3Location": { "Ref": "BucketName" },
+  				"s3Location": { "Ref": "BridgeBucket" },
     			"host": { "Ref": "SFTPHostname" },
       			"port": 22,
       			"password": { "Ref": "SFTPPassword" },
@@ -242,7 +235,6 @@
     "BridgeBucket": {
       "Type" : "AWS::S3::Bucket",
       "Properties": {
-        "BucketName": { "Ref": "BucketName" },
 		"LifecycleConfiguration": {
 			"Rules": [
 				{
@@ -250,10 +242,18 @@
 					"ExpirationInDays": "90"
 				}
 			]
-		}
 		},
-      "DependsOn": [
-        "BridgeResourcePolicy","S3ToSQSPolicy"
+		"NotificationConfiguration": {
+          "QueueConfigurations": [
+            {
+              "Event": "s3:ObjectCreated:*",
+              "Queue": { "Fn::GetAtt": [ "BridgeQueue", "Arn" ] }
+            }
+          ]
+        }
+		},
+		"DependsOn": [
+        "S3ToSQSPolicy","IntegrationTest"
       ]
     },
 	"TeleoptiFirehoseDeliveryStream": {
@@ -425,7 +425,7 @@
       "Value": { "Fn::GetAtt": [ "BridgeFunction", "Arn" ] }
     },
     "BridgeFunctionName": {
-      "Description": "The ARN of the function that moves files between S3 and SFTP.",
+      "Description": "The Name of the function that moves files between S3 and SFTP.",
       "Value": { "Ref": "BridgeFunction" }
     },
     "BridgeFunctionRole": {
