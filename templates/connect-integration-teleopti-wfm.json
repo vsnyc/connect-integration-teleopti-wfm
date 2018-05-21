@@ -39,7 +39,8 @@
             "AllowedPattern": "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}$",
             "ConstraintDescription": " Password must be at least 8 characters, and contain uppercase and lowercase letters, and at least one numeric.",
             "Type": "String",
-            "Description": "The Teleopti provided password for your SFTP account."
+            "Description": "The Teleopti provided password for your SFTP account.",
+            "NoEcho": true
         },
         "SFTPHostname": {
             "Type": "String",
