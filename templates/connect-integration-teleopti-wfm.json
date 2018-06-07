@@ -140,7 +140,7 @@
             "Type": "AWS::Lambda::Function",
             "Properties": {
                 "Code": {
-                    "S3Bucket": "teleoptiintegration",
+                    "S3Bucket": "aws-quickstart",
                     "S3Key": "connect-integration-teleopti-wfm/functions/packages/integration-test/lambda.zip"
                 },
                 "Handler": "main.handle",
@@ -300,7 +300,7 @@
             "Type": "AWS::Lambda::Function",
             "Properties": {
                 "Code": {
-                    "S3Bucket": "teleoptiintegration",
+                    "S3Bucket": "aws-quickstart",
                     "S3Key": "connect-integration-teleopti-wfm/functions/packages/integration/lambda.zip"
                 },
                 "FunctionName": {
