@@ -54,14 +54,17 @@
                     "Assert": {
                         "Fn::Contains": [
                             [
-                                "us-east-1"
+                                "us-east-1",
+                                "us-west-2",
+                                "eu-central-1",
+                                "ap-southeast-2"
                             ],
                             {
                                 "Ref": "AWS::Region"
                             }
                         ]
                     },
-                    "AssertDescription": "Supported regions: US East (N. Virginia) - us-east-1"
+                    "AssertDescription": "Region must be either US East (N. Virginia) - us-east-1, US West (Oregon) - us-west-2, EU (Frankfurt) - eu-central-1, Asia Pacific (Sydney) - ap-southeast-2"
                 }
             ]
         }
