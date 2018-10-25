@@ -1,6 +1,6 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
-    "Description": "TeleOpti WFM integration for Amazon Connect (qs-1ofbedn5h)",
+    "Description": "TeleOpti WFM integration for Amazon Connect",
     "Metadata": {
         "AWS::CloudFormation::Interface": {
             "ParameterGroups": [
