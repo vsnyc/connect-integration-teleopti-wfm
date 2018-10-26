@@ -35,10 +35,10 @@
                     "default": "Teleopti SFTP Hostname:"
                 },
                 "QSS3BucketName": {
-                    "default": "Teleopti SFTP User Password:"
+                    "default": "Quick Start S3 Bucket Name:"
                 },
                 "QSS3KeyPrefix": {
-                    "default": "Teleopti SFTP Hostname:"
+                    "default": "Quick Start lamdba S3 Prefix:"
                 }
             }
         }
@@ -119,7 +119,7 @@
 			"Type": "AWS::CloudFormation::Stack",
 			"Properties": {
 				"TemplateURL": {
-					"Fn::Sub": "https://aws-quickstart.s3.amazonaws.com/connect-integration-teleopti-wfm/templates/s3-teleopti-sftp.json"
+					"Fn::Sub": "https://aws-quickstart.s3.amazonaws.com/connect-integration-teleopti-wfm/templates/connect-integration-teleopti-wfm-workload.json"
 				},
 				"Parameters": {
 					"QSS3BucketName": {
@@ -141,6 +141,48 @@
 						"Ref": "SFTPPassword"
 					}
 				}
+			}
+		}
+	},
+	"Outputs": {
+		"TeleoptiIntegrationFunctionArn": {
+			"Description": "The ARN of the function that moves files between S3 and SFTP.",
+			"Value": {
+				"Fn::GetAtt": "TeleoptiCopyLambdaStack.Outputs.TeleoptiIntegrationFunctionArn"
+			}
+		},
+		"TeleoptiIntegrationFunctionName": {
+			"Description": "The Name of the function that moves files between S3 and SFTP.",
+			"Value": {
+				"Fn::GetAtt": "TeleoptiCopyLambdaStack.Outputs.TeleoptiIntegrationFunctionName"
+			}
+		},
+		"TeleoptiIntegrationFunctionRole": {
+			"Description": "The role used by the generated Lambda function, to be added to any KMS keys.",
+			"Value": {
+				"Fn::GetAtt": "TeleoptiCopyLambdaStack.Outputs.TeleoptiIntegrationFunctionRole"
+			}
+		},
+		"FirehoseDeliveryStreamName": {
+			"Description": "The Firehose Delivery Stream to assign for CTR and Report Delivery.",
+			"Value": {
+				"Fn::GetAtt": "TeleoptiCopyLambdaStack.Outputs.FirehoseDeliveryStreamName"
+			}
+		},
+		"RTAIAMUserName": {
+			"Description": "The UserName of the RTA IAM User.",
+			"Value": {
+				"Fn::GetAtt": "TeleoptiCopyLambdaStack.Outputs.RTAIAMUserName"
+			}
+		},
+		"AccessKeyforTeleoptiRTA": {
+			"Value": {
+				"Fn::GetAtt": "TeleoptiCopyLambdaStack.Outputs.AccessKeyforTeleoptiRTA"
+			}
+		},
+		"SecretKeyforTeleoptiRTA": {
+			"Value": {
+				"Fn::GetAtt": "TeleoptiCopyLambdaStack.Outputs.SecretKeyforTeleoptiRTA"
 			}
 		}
 	}
