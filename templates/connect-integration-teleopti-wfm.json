@@ -103,7 +103,7 @@
 			"Type": "AWS::CloudFormation::Stack",
 			"Properties": {
 				"TemplateURL": {
-					"Fn::Sub": "https://aws-quickstart.s3.amazonaws.com/connect-integration-teleopti-wfm/templates/teleopti_copy_lambda.json"
+					"Fn::Sub": "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}templates/teleopti_copy_lambda.json"
 				},
 				"Parameters": {
 					"QSS3BucketName": {
@@ -119,7 +119,7 @@
 			"Type": "AWS::CloudFormation::Stack",
 			"Properties": {
 				"TemplateURL": {
-					"Fn::Sub": "https://aws-quickstart.s3.amazonaws.com/connect-integration-teleopti-wfm/templates/connect-integration-teleopti-wfm-workload.json"
+					"Fn::Sub": "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}templates/connect-integration-teleopti-wfm-workload.json"
 				},
 				"Parameters": {
 					"QSS3BucketName": {
@@ -133,9 +133,6 @@
 					},
 					"SFTPUserName": {
 						"Ref": "SFTPUserName"
-					},
-					"SFTPPassword": {
-						"Ref": "SFTPPassword"
 					},
 					"SFTPPassword": {
 						"Ref": "SFTPPassword"
@@ -187,3 +184,4 @@
 		}
 	}
 }
+
