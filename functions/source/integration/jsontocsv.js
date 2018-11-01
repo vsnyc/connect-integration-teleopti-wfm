@@ -1,5 +1,5 @@
 exports.jsonconvert = function(jsonobject){
-var headers="Agent_ARN,Agent_AfterContactWorkDuration,Agent_AgentInteractionDuration,Agent_Username,Channel,ContactID,InitiationMethod,Queue_ARN,Queue_Duration,Queue_EnqueueTimestamp,Queue_Name,SystemEndpoint_Address,TransferCompletedTimestamp,TransferredToEndpoint";
+var headers="Agent_ARN,Agent_AfterContactWorkDuration,Agent_AgentInteractionDuration,Agent_Username,Channel,ContactID,InitiationMethod,InitiationTimestamp,Queue_ARN,Queue_Duration,Queue_EnqueueTimestamp,Queue_Name,SystemEndpoint_Address,TransferCompletedTimestamp,TransferredToEndpoint";
 var csvdata = headers + '\n';
 var jsoncorrected = '{"Contacts": [' + jsonobject.replace(/}{|}\n{/g,'},{') + ']}';
 parsedObj = JSON.parse(jsoncorrected);
@@ -20,6 +20,7 @@ for(var i=0;i<parsedObj.Contacts.length;i++){
 	csvdata += parsedObj.Contacts[i]["Channel"] + ",";
 	csvdata += parsedObj.Contacts[i]["ContactId"] + ",";
 	csvdata += parsedObj.Contacts[i]["InitiationMethod"] + ",";
+	csvdata += parsedObj.Contacts[i]["InitiationTimestamp"] + ",";
 	if (parsedObj.Contacts[i].Queue === null){
 		csvdata += ",,,,"
 	}
