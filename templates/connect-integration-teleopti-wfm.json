@@ -145,41 +145,41 @@
 		"TeleoptiIntegrationFunctionArn": {
 			"Description": "The ARN of the function that moves files between S3 and SFTP.",
 			"Value": {
-				"Fn::GetAtt": "TeleoptiCopyLambdaStack.Outputs.TeleoptiIntegrationFunctionArn"
+				"Fn::GetAtt": "TeleoptiIntegrationStack.Outputs.TeleoptiIntegrationFunctionArn"
 			}
 		},
 		"TeleoptiIntegrationFunctionName": {
 			"Description": "The Name of the function that moves files between S3 and SFTP.",
 			"Value": {
-				"Fn::GetAtt": "TeleoptiCopyLambdaStack.Outputs.TeleoptiIntegrationFunctionName"
+				"Fn::GetAtt": "TeleoptiIntegrationStack.Outputs.TeleoptiIntegrationFunctionName"
 			}
 		},
 		"TeleoptiIntegrationFunctionRole": {
 			"Description": "The role used by the generated Lambda function, to be added to any KMS keys.",
 			"Value": {
-				"Fn::GetAtt": "TeleoptiCopyLambdaStack.Outputs.TeleoptiIntegrationFunctionRole"
+				"Fn::GetAtt": "TeleoptiIntegrationStack.Outputs.TeleoptiIntegrationFunctionRole"
 			}
 		},
 		"FirehoseDeliveryStreamName": {
 			"Description": "The Firehose Delivery Stream to assign for CTR and Report Delivery.",
 			"Value": {
-				"Fn::GetAtt": "TeleoptiCopyLambdaStack.Outputs.FirehoseDeliveryStreamName"
+				"Fn::GetAtt": "TeleoptiIntegrationStack.Outputs.FirehoseDeliveryStreamName"
 			}
 		},
 		"RTAIAMUserName": {
 			"Description": "The UserName of the RTA IAM User.",
 			"Value": {
-				"Fn::GetAtt": "TeleoptiCopyLambdaStack.Outputs.RTAIAMUserName"
+				"Fn::GetAtt": "TeleoptiIntegrationStack.Outputs.RTAIAMUserName"
 			}
 		},
 		"AccessKeyforTeleoptiRTA": {
 			"Value": {
-				"Fn::GetAtt": "TeleoptiCopyLambdaStack.Outputs.AccessKeyforTeleoptiRTA"
+				"Fn::GetAtt": "TeleoptiIntegrationStack.Outputs.AccessKeyforTeleoptiRTA"
 			}
 		},
 		"SecretKeyforTeleoptiRTA": {
 			"Value": {
-				"Fn::GetAtt": "TeleoptiCopyLambdaStack.Outputs.SecretKeyforTeleoptiRTA"
+				"Fn::GetAtt": "TeleoptiIntegrationStack.Outputs.SecretKeyforTeleoptiRTA"
 			}
 		}
 	}
