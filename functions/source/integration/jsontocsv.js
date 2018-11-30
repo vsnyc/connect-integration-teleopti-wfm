@@ -5,7 +5,7 @@ var jsoncorrected = '{"Contacts": [' + jsonobject.replace(/}{|}\n{/g,'},{') + ']
 parsedObj = JSON.parse(jsoncorrected);
 //console.log('Count:' + parsedObj.Contacts.length);
 //console.log(parsedObj.Contacts);
-for(var i=0;i<parsedObj.Contacts.length;i++){lambda
+for(var i=0;i<parsedObj.Contacts.length;i++){
 	//console.log("Agent: " + parsedObj.Contacts[i].Agent);
 	if (parsedObj.Contacts[i].Agent === null){
 		csvdata += ",,,,"
