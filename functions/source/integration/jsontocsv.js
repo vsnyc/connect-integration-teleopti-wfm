@@ -1,5 +1,5 @@
 exports.jsonconvert = function(jsonobject){
-var headers="Agent_ARN,Agent_AfterContactWorkDuration,Agent_AgentInteractionDuration,Agent_Username,Channel,ContactID,InitiationMethod,InitiationTimestamp,Queue_ARN,Queue_Duration,Queue_EnqueueTimestamp,Queue_Name,SystemEndpoint_Address,TransferCompletedTimestamp,TransferredToEndpoint";
+var headers="Agent_ARN,Agent_AfterContactWorkDuration,Agent_AgentInteractionDuration,Agent_CustomerHoldDuration,Agent_Username,Channel,ContactID,InitiationMethod,InitiationTimestamp,Queue_ARN,Queue_Duration,Queue_EnqueueTimestamp,Queue_Name,SystemEndpoint_Address,TransferCompletedTimestamp,TransferredToEndpoint";
 var csvdata = headers + '\n';
 var jsoncorrected = '{"Contacts": [' + jsonobject.replace(/}{|}\n{/g,'},{') + ']}';
 parsedObj = JSON.parse(jsoncorrected);
@@ -14,6 +14,7 @@ for(var i=0;i<parsedObj.Contacts.length;i++){
 		csvdata += parsedObj.Contacts[i].Agent["ARN"].substring(parsedObj.Contacts[i].Agent["ARN"].lastIndexOf("/") + 1, parsedObj.Contacts[i].Agent["ARN"].length) + ",";
 		csvdata += parsedObj.Contacts[i].Agent["AfterContactWorkDuration"] + ",";
 		csvdata += parsedObj.Contacts[i].Agent["AgentInteractionDuration"] + ",";
+		csvdata += parsedObj.Contacts[i].Agent["CustomerHoldDuration"] + ",";
 		csvdata += parsedObj.Contacts[i].Agent["Username"] + ",";
 	}
 
