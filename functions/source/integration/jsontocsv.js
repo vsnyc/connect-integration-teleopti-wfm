@@ -8,7 +8,7 @@ parsedObj = JSON.parse(jsoncorrected);
 for(var i=0;i<parsedObj.Contacts.length;i++){
 	//console.log("Agent: " + parsedObj.Contacts[i].Agent);
 	if (parsedObj.Contacts[i].Agent === null){
-		csvdata += ",,,,"
+		csvdata += ",,,,,"
 	}
 	else {
 		csvdata += parsedObj.Contacts[i].Agent["ARN"].substring(parsedObj.Contacts[i].Agent["ARN"].lastIndexOf("/") + 1, parsedObj.Contacts[i].Agent["ARN"].length) + ",";
