@@ -47,11 +47,9 @@ exports.pollSqs = function(context) {
 };
 
 function internalNewS3Object(event, context) {
-	if(!event.Records){
-		console.log("No SQS messages waiting.");
-    	}
-	else{
 	  return Promise.try(function() {
+		  if (!event.Records){ console.log("Not a valid record entry.");}
+		  else{
 		  console.info("Retrieving sftp variables");
 		  return conf.getConfigAsync(context)
 	    .then(function(config) {
@@ -85,6 +83,7 @@ function internalNewS3Object(event, context) {
 	                    objIsCSV = false;
 	                    console.log(msg);
 	                }
+	                else {objIsCSV = true;}
 	                
 	                if (!objIsCSV){
 	                	bodydata = json2csv.jsonconvert(objectData.Body.toString("utf8"));
@@ -116,8 +115,9 @@ function internalNewS3Object(event, context) {
 	          });
 	        }
 	      );
+		  }
 	    });
-	}
+	//}
   };
 
 exports.newS3Object = function(event, context) {
