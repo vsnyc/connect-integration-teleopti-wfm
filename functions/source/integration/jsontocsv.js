@@ -31,7 +31,14 @@ for(var i=0;i<parsedObj.Contacts.length;i++){
 		csvdata += parsedObj.Contacts[i].Queue["EnqueueTimestamp"] + ",";
 		csvdata += parsedObj.Contacts[i].Queue["Name"] + ",";
 	}
-	csvdata += parsedObj.Contacts[i].SystemEndpoint["Address"] + ",";
+	
+	if (parsedObj.Contacts[i].SystemEndpoint === null){
+		csvdata += ","
+	}
+	else {
+		csvdata += parsedObj.Contacts[i].SystemEndpoint["Address"] + ",";
+	}
+	
 	csvdata += parsedObj.Contacts[i]["TransferCompletedTimestamp"] + ",";
 	csvdata += parsedObj.Contacts[i]["TransferredToEndpoint"] + '\n';
 	//console.log("Record: " + csvdata);
