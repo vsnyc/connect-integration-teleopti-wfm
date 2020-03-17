@@ -31,7 +31,7 @@
                 },
                 "Objects": [
                     "functions/packages/integration/lambda.zip",
-					"functions/packages/integration-test/lambda.zip"
+                    "functions/packages/integration-test/lambda.zip"
                 ],
                 "SourceBucket": {
                     "Ref": "QSS3BucketName"

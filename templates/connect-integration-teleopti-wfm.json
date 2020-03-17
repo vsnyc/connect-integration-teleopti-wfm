@@ -61,7 +61,7 @@
             "Type": "String",
             "Description": "The Teleopti provided hostname of your SFTP server."
         },
-		"QSS3BucketName": {
+        "QSS3BucketName": {
             "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$",
             "ConstraintDescription": "Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).",
             "Default": "aws-quickstart",
@@ -76,7 +76,7 @@
             "Type": "String"
         }
     },
-	"Rules": {
+    "Rules": {
         "RegionSupport": {
             "Assertions": [
                 {
@@ -84,24 +84,24 @@
                         "Fn::Contains": [
                             [
                                 "us-east-1",
-				"us-east-2",
-				"us-west-1",
+                "us-east-2",
+                "us-west-1",
                                 "us-west-2",
-				"ap-east-1",
-				"ap-northeast-1",
-				"ap-northeast-2",
-				"ap-northeast-3",
-				"ap-south-1",
-				"ap-southeast-1",
-				"ap-southeast-2",
-				"ca-central-1",
+                "ap-east-1",
+                "ap-northeast-1",
+                "ap-northeast-2",
+                "ap-northeast-3",
+                "ap-south-1",
+                "ap-southeast-1",
+                "ap-southeast-2",
+                "ca-central-1",
                                 "eu-central-1",
-				"eu-north-1",
-				"eu-west-1",
-				"eu-west-2",
-				"eu-west-3",
-				"me-south-1",
-				"sa-east-1"                                
+                "eu-north-1",
+                "eu-west-1",
+                "eu-west-2",
+                "eu-west-3",
+                "me-south-1",
+                "sa-east-1"                                
                             ],
                             {
                                 "Ref": "AWS::Region"
@@ -113,90 +113,90 @@
             ]
         }
     },
-	"Resources": {
-		"TeleoptiCopyLambdaStack": {
-			"Type": "AWS::CloudFormation::Stack",
-			"Properties": {
-				"TemplateURL": {
-					"Fn::Sub": "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}templates/teleopti_copy_lambda.json"
-				},
-				"Parameters": {
-					"QSS3BucketName": {
-						"Ref": "QSS3BucketName"
-					},
-					"QSS3KeyPrefix": {
-						"Ref": "QSS3KeyPrefix"
-					}
-				}
-			}
-		},
-		"TeleoptiIntegrationStack": {
-			"Type": "AWS::CloudFormation::Stack",
-			"Properties": {
-				"TemplateURL": {
-					"Fn::Sub": "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}templates/connect-integration-teleopti-wfm-workload.json"
-				},
-				"Parameters": {
-					"QSS3BucketName": {
-						"Fn::GetAtt": "TeleoptiCopyLambdaStack.Outputs.TeleoptiLambdasBucket"
-					},
-					"QSS3KeyPrefix": {
-						"Ref": "QSS3KeyPrefix"
-					},
-					"SFTPHostname": {
-						"Ref": "SFTPHostname"
-					},
-					"SFTPUserName": {
-						"Ref": "SFTPUserName"
-					},
-					"SFTPPassword": {
-						"Ref": "SFTPPassword"
-					}
-				}
-			}
-		}
-	},
-	"Outputs": {
-		"TeleoptiIntegrationFunctionArn": {
-			"Description": "The ARN of the function that moves files between S3 and SFTP.",
-			"Value": {
-				"Fn::GetAtt": "TeleoptiIntegrationStack.Outputs.TeleoptiIntegrationFunctionArn"
-			}
-		},
-		"TeleoptiIntegrationFunctionName": {
-			"Description": "The Name of the function that moves files between S3 and SFTP.",
-			"Value": {
-				"Fn::GetAtt": "TeleoptiIntegrationStack.Outputs.TeleoptiIntegrationFunctionName"
-			}
-		},
-		"TeleoptiIntegrationFunctionRole": {
-			"Description": "The role used by the generated Lambda function, to be added to any KMS keys.",
-			"Value": {
-				"Fn::GetAtt": "TeleoptiIntegrationStack.Outputs.TeleoptiIntegrationFunctionRole"
-			}
-		},
-		"FirehoseDeliveryStreamName": {
-			"Description": "The Firehose Delivery Stream to assign for CTR and Report Delivery.",
-			"Value": {
-				"Fn::GetAtt": "TeleoptiIntegrationStack.Outputs.FirehoseDeliveryStreamName"
-			}
-		},
-		"RTAIAMUserName": {
-			"Description": "The UserName of the RTA IAM User.",
-			"Value": {
-				"Fn::GetAtt": "TeleoptiIntegrationStack.Outputs.RTAIAMUserName"
-			}
-		},
-		"AccessKeyforTeleoptiRTA": {
-			"Value": {
-				"Fn::GetAtt": "TeleoptiIntegrationStack.Outputs.AccessKeyforTeleoptiRTA"
-			}
-		},
-		"SecretKeyforTeleoptiRTA": {
-			"Value": {
-				"Fn::GetAtt": "TeleoptiIntegrationStack.Outputs.SecretKeyforTeleoptiRTA"
-			}
-		}
-	}
+    "Resources": {
+        "TeleoptiCopyLambdaStack": {
+            "Type": "AWS::CloudFormation::Stack",
+            "Properties": {
+                "TemplateURL": {
+                    "Fn::Sub": "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}templates/teleopti_copy_lambda.json"
+                },
+                "Parameters": {
+                    "QSS3BucketName": {
+                        "Ref": "QSS3BucketName"
+                    },
+                    "QSS3KeyPrefix": {
+                        "Ref": "QSS3KeyPrefix"
+                    }
+                }
+            }
+        },
+        "TeleoptiIntegrationStack": {
+            "Type": "AWS::CloudFormation::Stack",
+            "Properties": {
+                "TemplateURL": {
+                    "Fn::Sub": "https://${QSS3BucketName}.s3.amazonaws.com/${QSS3KeyPrefix}templates/connect-integration-teleopti-wfm-workload.json"
+                },
+                "Parameters": {
+                    "QSS3BucketName": {
+                        "Fn::GetAtt": "TeleoptiCopyLambdaStack.Outputs.TeleoptiLambdasBucket"
+                    },
+                    "QSS3KeyPrefix": {
+                        "Ref": "QSS3KeyPrefix"
+                    },
+                    "SFTPHostname": {
+                        "Ref": "SFTPHostname"
+                    },
+                    "SFTPUserName": {
+                        "Ref": "SFTPUserName"
+                    },
+                    "SFTPPassword": {
+                        "Ref": "SFTPPassword"
+                    }
+                }
+            }
+        }
+    },
+    "Outputs": {
+        "TeleoptiIntegrationFunctionArn": {
+            "Description": "The ARN of the function that moves files between S3 and SFTP.",
+            "Value": {
+                "Fn::GetAtt": "TeleoptiIntegrationStack.Outputs.TeleoptiIntegrationFunctionArn"
+            }
+        },
+        "TeleoptiIntegrationFunctionName": {
+            "Description": "The Name of the function that moves files between S3 and SFTP.",
+            "Value": {
+                "Fn::GetAtt": "TeleoptiIntegrationStack.Outputs.TeleoptiIntegrationFunctionName"
+            }
+        },
+        "TeleoptiIntegrationFunctionRole": {
+            "Description": "The role used by the generated Lambda function, to be added to any KMS keys.",
+            "Value": {
+                "Fn::GetAtt": "TeleoptiIntegrationStack.Outputs.TeleoptiIntegrationFunctionRole"
+            }
+        },
+        "FirehoseDeliveryStreamName": {
+            "Description": "The Firehose Delivery Stream to assign for CTR and Report Delivery.",
+            "Value": {
+                "Fn::GetAtt": "TeleoptiIntegrationStack.Outputs.FirehoseDeliveryStreamName"
+            }
+        },
+        "RTAIAMUserName": {
+            "Description": "The UserName of the RTA IAM User.",
+            "Value": {
+                "Fn::GetAtt": "TeleoptiIntegrationStack.Outputs.RTAIAMUserName"
+            }
+        },
+        "AccessKeyforTeleoptiRTA": {
+            "Value": {
+                "Fn::GetAtt": "TeleoptiIntegrationStack.Outputs.AccessKeyforTeleoptiRTA"
+            }
+        },
+        "SecretKeyforTeleoptiRTA": {
+            "Value": {
+                "Fn::GetAtt": "TeleoptiIntegrationStack.Outputs.SecretKeyforTeleoptiRTA"
+            }
+        }
+    }
 }
 
