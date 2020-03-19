@@ -38,7 +38,7 @@ exports.testFTP = function(event, context) {
                 console.info("sftpDirPath:" + sftpDirPath);
                 return exports.getSftpConfig(config)
                   .then(function(sftpConfig) {
-                    return exports.withSftpClient(sftpConfig, function(sftp) {
+                    return exports.withSftpClient(event, context, sftpConfig, function(sftp) {
                     	var utc = new Date().toJSON().slice(0,16).replace(/:/g,'')
                     	var sftpFileName = sftpDirPath.concat("testfile_" + utc + ".txt");
 
@@ -101,7 +101,7 @@ function flatten(arr) {
 }
 
 //Returns a Disposer
-exports.getSshClient = function(config) {
+exports.getSshClient = function(event, context, config) {
   var conn = new SshClient();
   var promise = new Promise(function(resolve, reject) {
     conn
@@ -109,6 +109,7 @@ exports.getSshClient = function(config) {
       resolve(conn);
     })
     .on('error', function(e) {
+        console.log(e);
     	response.send(event, context, response.FAILED, {}, "");
      })
     .connect(config);
@@ -120,8 +121,8 @@ exports.getSshClient = function(config) {
 
 // Don't attempt to use the sftp object outside of the 'process' function (i.e.
 // in a .then hung off the resultant Promise) - the connection will be closed.
-exports.withSftpClient = function(config, process) {
-  return Promise.using(exports.getSshClient(config), function(conn) {
+exports.withSftpClient = function(event, context, config, process) {
+  return Promise.using(exports.getSshClient(event, context, config), function(conn) {
     return Promise.promisify(conn.sftp, {context: conn})()
     .then(function(sftp) {
       return process(Promise.promisifyAll(sftp));
