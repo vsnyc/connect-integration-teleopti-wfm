@@ -274,9 +274,6 @@
                         "Fn::Sub": "${QSS3KeyPrefix}functions/packages/integration/lambda.zip"
                     }
                 },
-                "FunctionName": {
-                    "Ref": "AWS::StackName"
-                },
                 "Description": "Used sync files between S3 and SFTP servers.",
                 "Environment": {
                     "Variables": {
@@ -390,9 +387,7 @@
                         "Fn::GetAtt": ["TeleoptiIntegrationFunction",
                         "Arn"]
                     },
-                    "Id": {
-                            "Ref": "AWS::StackName"
-                    }
+                    "Id": { "Fn::Select" : [ "2", { "Fn::Split" : [ "/", {"Ref":  "AWS::StackId"}] } ] }
                 }]
             }
         },
