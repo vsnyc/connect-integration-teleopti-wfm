@@ -1,22 +1,79 @@
 var AWS = require('aws-sdk'),
 	util = require('util'),
 	Promise = require('bluebird'),
-	response = require('./cfn-response'),
 	SshClient = require('ssh2').Client,
+	url = require('url'),
+	https = require('https'),
     s3 = Promise.promisifyAll(require('node-s3-encryption-client'))
 
 exports.handle = function(event, context) {
 	if (event.RequestType === 'Create'){
+	console.log(event);
 		try{
-			return exports.testFTP(event, context);
+		    return exports.testFTP(event, context)
+                .then(result => delay(180000, result));
 		}
 		catch(error){
 			console.error(error);
-			response.send(event, context, response.FAILED, {}, "");
+			sendResponse(event, context.logStreamName, 'FAILED', {});
 		}
 	}
-	else response.send(event, context, response.SUCCESS, {}, "");
+	else sendResponse(event, context.logStreamName, 'SUCCESS', {});
 		
+};
+
+function delay(t, v) {
+   return new Promise(function(resolve) {
+       setTimeout(resolve.bind(null, v), t)
+   });
+}
+
+var errHandler = function (err) {
+  console.log(err);
+}
+
+/**
+ * Sends a response to the pre-signed S3 URL
+ */
+let sendResponse = function(event, logStreamName, responseStatus, responseData) {
+    const responseBody = JSON.stringify({
+        Status: responseStatus,
+        Reason: `See the details in CloudWatch Log Stream: ${logStreamName}`,
+        PhysicalResourceId: logStreamName,
+        StackId: event.StackId,
+        RequestId: event.RequestId,
+        LogicalResourceId: event.LogicalResourceId,
+        Data: responseData,
+    });
+
+    console.log('RESPONSE BODY:\n', responseBody);
+    const parsedUrl = url.parse(event.ResponseURL);
+
+    const options = {
+        hostname: parsedUrl.hostname,
+        port: 443,
+        path: parsedUrl.path,
+        method: 'PUT',
+        headers: {
+            'Content-Type': '',
+            'Content-Length': responseBody.length,
+        }
+    };
+
+    const req = https.request(options, (res) => {
+        console.log('STATUS:', res.statusCode);
+        console.log('HEADERS:', JSON.stringify(res.headers));
+        console.log('Successfully sent stack response!');
+    });
+    console.log(req);
+
+    req.on('error', (err) => {
+        console.log('sendResponse Error:\n', err);
+        console.log(err);
+    });
+
+    req.write(responseBody);
+    req.end();
 };
 
 exports.testFTP = function(event, context) {
@@ -29,6 +86,7 @@ exports.testFTP = function(event, context) {
 			  "username": event.ResourceProperties.username,
 			  "sftpLocation": event.ResourceProperties.sftpLocation
 	  };
+	            var physicalId = event.PhysicalResourceId;
             	var configKeys = Object.keys(config)//.filter(function(key) {
             	if (configKeys.length === 0) console.warn("No configured SFTP destination");
 
@@ -50,7 +108,8 @@ exports.testFTP = function(event, context) {
                       )
                       .then(function() {
                         console.info("[" + sftpFileName + "]: Created one file via SFTP");
-                        response.send(event, context, response.SUCCESS, {}, "");
+
+                        sendResponse(event, context.logStreamName, 'SUCCESS', {});
                       });
                     });
                   })
@@ -110,7 +169,7 @@ exports.getSshClient = function(event, context, config) {
     })
     .on('error', function(e) {
         console.log(e);
-    	response.send(event, context, response.FAILED, {}, "");
+    	sendResponse(event, context.logStreamName, 'FAILED', {});
      })
     .connect(config);
   });
@@ -140,7 +199,7 @@ exports.writeFile = function(sftp, fileName, body) {
   return sftp.openAsync(fileName.toString(), 'w')
   .then(function(handle) {
 	  console.info("Opened sftp file.");
-    return sftp.writeAsync(handle, new Buffer(body), 0, body.length, 0)
+    return sftp.writeAsync(handle, new Buffer.from(body), 0, body.length, 0)
     .then(function() {
     	console.info("Closing SFTP file.");
       return sftp.closeAsync(handle);
