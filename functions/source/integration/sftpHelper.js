@@ -18,7 +18,7 @@ exports.getSshClient = function(config) {
   return promise.disposer(function(conn, promise) {
     conn.end();
   });
-}
+};
 
 /*
 sftp: SFTP client from ssh2, assumed to already be promisified.
@@ -66,7 +66,7 @@ exports.processFile = function(sftp, dir, fileName, process) {
       });
     });
   });
-}
+};
 
 // Don't attempt to use the sftp object outside of the 'process' function (i.e.
 // in a .then hung off the resultant Promise) - the connection will be closed.
@@ -77,7 +77,7 @@ exports.withSftpClient = function(config, process) {
       return process(Promise.promisifyAll(sftp));
     });
   });
-}
+};
 
 /*
 sftp: SFTP client from ssh2, assumed to already be promisified.
@@ -89,13 +89,13 @@ exports.writeFile = function(sftp, fileName, body) {
   return sftp.openAsync(fileName, 'w')
   .then(function(handle) {
 	  //console.info("Opened sftp file.");
-    return sftp.writeAsync(handle, new Buffer(body), 0, body.length, 0)
+    return sftp.writeAsync(handle, new Buffer.from(body), 0, body.length, 0)
     .then(function() {
     	//console.info("Closing SFTP file.");
       return sftp.closeAsync(handle);
     });
   });
-}
+};
 
 function getCurrentTimestamp() {
   return (new Date()).toISOString().slice(0,19).replace(/-/g,"").replace(/:/g,"").replace(/T/g,"");
