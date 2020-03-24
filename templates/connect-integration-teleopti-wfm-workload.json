@@ -97,7 +97,15 @@
             "Type": "AWS::SQS::Queue",
             "Properties": {
                 "MessageRetentionPeriod": 1209600,
-                "VisibilityTimeout": 180
+                "VisibilityTimeout": 180,
+                "QueueName": {
+                    "Fn::Join": ["-",
+                        [
+                            "teleopti-integration",
+                            { "Fn::Select" : [ "2", { "Fn::Split" : [ "/", {"Ref":  "AWS::StackId"}] } ] }
+                        ]
+                    ]
+                }
             }
         },
         "S3ToSQSPolicy": {
@@ -266,6 +274,14 @@
         "TeleoptiIntegrationFunction": {
             "Type": "AWS::Lambda::Function",
             "Properties": {
+                "FunctionName": {
+                    "Fn::Join": ["-",
+                        [
+                            "teleopti-integration",
+                            { "Fn::Select" : [ "2", { "Fn::Split" : [ "/", {"Ref":  "AWS::StackId"}] } ] }
+                        ]
+                    ]
+                },
                 "Code": {
                     "S3Bucket": {
                         "Ref": "QSS3BucketName"
