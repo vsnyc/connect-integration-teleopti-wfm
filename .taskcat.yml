@@ -2,14 +2,16 @@ project:
   name: connect-integration-teleopti-wfm
   owner: servicedesk@teleopti.com
   package_lambda: false
-  s3_regional_buckets: false
+  s3_regional_buckets: true
+  shorten_stack_name: true
   regions:
   - us-east-1
   s3_bucket: ''
 tests:
-  defaults:
+  teleopti:
     parameters:
       QSS3BucketName: $[taskcat_autobucket]
+      QSS3BucketRegion: $[taskcat_current_region]
       SFTPHostname: override.example.com
       SFTPPassword: Overr1d3
       SFTPUserName: override
