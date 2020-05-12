@@ -7,11 +7,21 @@
                 "Label": {
                     "default": "Teleopti SFTP Credentials"
                 },
-                "Parameters": ["SFTPHostname",
-                "SFTPUserName",
-                "SFTPPassword"]
+                "Parameters": [
+                    "SecurityGroupIds",
+                    "SubnetIds",
+                    "SFTPHostname",
+                    "SFTPUserName",
+                    "SFTPPassword"
+                ]
             }],
             "ParameterLabels": {
+                "SecurityGroupIds": {
+                    "default": "List of security group IDs"
+                },
+                "SubnetIds": {
+                    "default": "List of subnet IDs"
+                },
                 "SFTPUserName": {
                     "default": "Teleopti SFTP User ID:"
                 },
@@ -41,6 +51,14 @@
         "SFTPHostname": {
             "Type": "String",
             "Description": "The Teleopti provided hostname of your SFTP server."
+        },
+        "SecurityGroupIds": {
+            "Description": "List of security group IDs in the VPC that should be attached to the Connect integration Lambda functions.",
+            "Type": "List<AWS::EC2::SecurityGroup::Id>"
+        },
+        "SubnetIds": {
+            "Description": "List of subnet IDs in the VPC that should be attached to the Connect integration Lambda functions. Note: the route table associated with the subnet(s) must point to NAT Gateway for 0.0.0.0/0 destination, and the NAT Gateway must have an elastic IP address that has been whitelisted by Calabrio.",
+            "Type": "List<AWS::EC2::Subnet::Id>"
         },
         "QSS3BucketName": {
             "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$",
@@ -150,6 +168,21 @@
                         "Action": ["sts:AssumeRole"]
                     }]
                 },
+				"Policies": [{
+					"PolicyName": "DBSNetworkInterface",
+					"PolicyDocument": {
+						"Version": "2012-10-17",
+						"Statement": [{
+							"Effect": "Allow",
+							"Action": [
+							"ec2:DescribeNetworkInterfaces",
+							"ec2:CreateNetworkInterface",
+							"ec2:DeleteNetworkInterface",
+							"ec2:AttachNetworkInterface"],
+							"Resource": "*"
+						}]
+					}
+				}],
                 "Path": "/",
                 "ManagedPolicyArns": ["arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"]
             }
@@ -172,6 +205,14 @@
                     "Arn"]
                 },
                 "Runtime": "nodejs10.x",
+                "VpcConfig" : {
+                    "SecurityGroupIds": {
+                        "Ref": "SecurityGroupIds"
+                    },
+                    "SubnetIds": {
+                        "Ref": "SubnetIds"
+                    }
+                  },
                 "Timeout": 300
             },
             "DependsOn": ["TeleoptiIntegrationTestRole"]
@@ -231,6 +272,21 @@
                         }]
                     }
                 },
+                {
+					"PolicyName": "DBSNetworkInterface",
+					"PolicyDocument": {
+						"Version": "2012-10-17",
+						"Statement": [{
+							"Effect": "Allow",
+							"Action": [
+							"ec2:DescribeNetworkInterfaces",
+							"ec2:CreateNetworkInterface",
+							"ec2:DeleteNetworkInterface",
+							"ec2:AttachNetworkInterface"],
+							"Resource": "*"
+						}]
+					}
+				},
                 {
                     "PolicyName": "FileSyncher",
                     "PolicyDocument": {
@@ -319,6 +375,14 @@
                     "Arn"]
                 },
                 "Runtime": "nodejs10.x",
+                "VpcConfig" : {
+                    "SecurityGroupIds": {
+                        "Ref": "SecurityGroupIds"
+                    },
+                    "SubnetIds": {
+                        "Ref": "SubnetIds"
+                    }
+                },
                 "Timeout": 300
             },
             "DependsOn": ["TeleoptiLambdaRole"]

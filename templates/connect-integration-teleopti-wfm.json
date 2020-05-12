@@ -9,6 +9,8 @@
                         "default": "Teleopti SFTP Credentials"
                     },
                     "Parameters": [
+                        "SecurityGroupIds",
+                        "SubnetIds",
                         "SFTPHostname",
                         "SFTPUserName",
                         "SFTPPassword"
@@ -26,6 +28,12 @@
                 }
             ],
             "ParameterLabels": {
+                "SecurityGroupIds": {
+                    "default": "List of security group IDs"
+                },
+                "SubnetIds": {
+                    "default": "List of subnet IDs"
+                },
                 "SFTPUserName": {
                     "default": "Teleopti SFTP User ID:"
                 },
@@ -64,6 +72,14 @@
         "SFTPHostname": {
             "Type": "String",
             "Description": "The Teleopti provided hostname of your SFTP server."
+        },
+        "SecurityGroupIds": {
+            "Description": "List of security group IDs in the VPC that should be attached to the Connect integration Lambda functions.",
+            "Type": "List<AWS::EC2::SecurityGroup::Id>"
+        },
+        "SubnetIds": {
+            "Description": "List of subnet IDs in the VPC that should be attached to the Connect integration Lambda functions. Note: the route table associated with the subnet(s) must point to NAT Gateway for 0.0.0.0/0 destination, and the NAT Gateway must have an elastic IP address that has been whitelisted by Calabrio.",
+            "Type": "List<AWS::EC2::Subnet::Id>"
         },
         "QSS3BucketName": {
             "AllowedPattern": "^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$",
@@ -192,6 +208,22 @@
                     },
                     "SFTPPassword": {
                         "Ref": "SFTPPassword"
+                    },
+                    "SecurityGroupIds": {
+                        "Fn::Join": [
+                            ",",
+                            {
+                                "Ref": "SecurityGroupIds"
+                            }
+                        ]
+                    },
+                    "SubnetIds": {
+                        "Fn::Join": [
+                            ",",
+                            {
+                                "Ref": "SubnetIds"
+                            }
+                        ]
                     }
                 }
             }
