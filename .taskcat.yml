@@ -29,5 +29,7 @@ tests:
       SFTPHostname: override.example.com
       SFTPPassword: Overr1d3
       SFTPUserName: override
+      SecurityGroupIds: sg-override
+      SubnetIds: subnet-override
     s3_bucket: ''
     template: templates/connect-integration-teleopti-wfm.json
